@@ -12,8 +12,7 @@ def data_write_csv(file_name, datas):#file_name为写入CSV文件的路径，dat
     writer = csv.writer(file_csv, dialect='excel')
     
     for data in datas:
-        for content in data:
-            writer.writerow(content)
+        writer.writerow(data)
     print("保存文件成功，处理结束")
 
 def getText(txt):
@@ -40,12 +39,19 @@ excludes = {"they","their","your","this","that","from","with","which","about","s
 
 #去除特殊符号
 
-def get_file_list(path,file):
+def get_file_list(path):
 
     # path = u'D:\\学习资料\\2010-2020年考研英语二真题\\2019年英语二真题.pdf'
     pdf_utils = sort3.PDFUtils()
     # print (pdf_utils.pdf2txt(path))
-    txt=pdf_utils.pdf2txt(path)
+
+    txt=''
+    for file in file_name(path):
+        file_path=path+"\\"+file
+        print(file_path)
+        txt_temp=pdf_utils.pdf2txt(file_path)
+        txt=txt+txt_temp
+        
     hamletTxt = getText(txt)
     #words  = hamletTxt.split() #按照空格，将文本分割
     #words  = nltk.word_tokenize(hamletTxt)
@@ -65,6 +71,7 @@ def get_file_list(path,file):
     #去除单词长度在7个以下的，去除之前定义的，统计其他单词的数量
     items = list(counts.items())   #将字典转换为列表，以便操作
     # list2=(path,'NO')
+    year='all'
     result=[]
     for item in items:
         if(item[0] in get_word_list('C:\\Users\\huanglm\\Desktop\\list.txt')):
@@ -72,7 +79,7 @@ def get_file_list(path,file):
         else:
             isInList="NO"  
     
-        list2=(file,isInList)
+        list2=(year,isInList)
         item_temp=item+list2
 
         result.append(item_temp)
@@ -81,25 +88,30 @@ def get_file_list(path,file):
     return result
 
 
-path = u'C:\\Users\\huanglm\\Desktop\\test'
+
 
 def file_name(file_dir):
     for _, _, files in os.walk(file_dir):
         return files
 
-def get_all_eng(path):
-    items_all=[]
-    for file in file_name(path):
-        file_path=path+"\\"+file
-        print(file_path)
-        items= get_file_list(file_path,file)
-        items.sort(key=lambda x:x[1], reverse=True)  # 见下面函数讲解
-        # print(items)
-        items_all.append(items)
+# def get_all_eng(path):
+#     items_all=[]
+#     for file in file_name(path):
+#         file_path=path+"\\"+file
+#         print(file_path)
+#         items= get_file_list(file_path,file)
+#         items.sort(key=lambda x:x[1], reverse=True)  # 见下面函数讲解
+#         # print(items)
+#         items_all.append(items)
     
-    # items_all_result = list(items_all.items()) 
-    return items_all
+#     # items_all_result = list(items_all.items()) 
+#     return items_all
 
-items_all= get_all_eng(path)
+path = u'C:\\Users\\huanglm\\Desktop\\test'
+
+items= get_file_list(path)
+items.sort(key=lambda x:x[1], reverse=True)  # 见下面函数讲解
+
+# items_all= get_all_eng(path)
 # print(items_all)
-data_write_csv('word2.csv', items_all)
+data_write_csv('word3.csv', items)
